@@ -1,0 +1,59 @@
+# we create a .github file as this is to do with github and then we create teh workflow configuration file
+
+#name workflow
+name: NASA Project CI
+# define the triggers that will cause this workflow to run
+on:
+  # in this cas we want to run our CI everytime something is pushed to the repo
+  push:
+    # specifically when code is pushed to one of these branches
+    branches: [master]
+  # triggers when there is a pull request on the master branch
+  pull_request:
+    branches: [master]
+# define jobs that will run when triggered, workflow made up of 1 or more jobs
+jobs:
+  # we'll name it build, this will build our project
+  build:
+    env:
+      # explicitly say we're running a CI server to disable watch mode for running tests on the client
+      CI: true
+      # this is the name of the db that will be setup in the action below
+      MONGO_URL: mongodb://localhost/nasa
+      # PORT: 9000
+    # we can run our tests and in fact the entire build job in differnet environments by setting the strategy option
+    strategy:
+      # specifically setting different variables on this matrix option
+      matrix:
+        # this will create 2 build jobs that run in parallel on version 14 and 16 of node
+        node-version: [14.x, 16.x]
+        mongodb-version: ['4.4']
+    # provide the OS our server will run on, ubuntu-latest (linux), macos-latest, windows-latest
+    runs-on: ubuntu-latest
+    # define the different actions that will be taken on ubuntu every time our job is triggered, reusable scripts that help to automate the different things we want to do
+    steps:
+      # checkout latest version of branch, specify version of action incase new version published e.g. @v2
+      - uses: actions/checkout@v2
+      # set up node, we can name our steps to make them easier to understand
+      # when using the matrix variables we can use the $ syntax instead of writing 16
+      - name: Use Node.js version ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        # set up with a specific version of node
+        with:
+          # again we must use the $ syntax when using matrix variables
+          node-version: ${{ matrix.node-version }}
+      - name: Use MongoDB from GitHub actions
+        # this starts a mongo db server specifically for the current job, the db is available on localhost within teh CI server
+        uses: supercharge/mongodb-github-action@1.6.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+      # install dependencies, we can run terminal commands that will run on our specified os
+      - run: npm install
+      # build frontend
+      - run: npm run build --prefix client
+      # test client and server
+      - run: npm test
+# if we were doing continuous deployment we may have 2nd job called, for example, deploy, if we decided this was dependent on the build job running successfully we could add the needs section under the title
+#deploy:
+# build and deploy would now run sequentially
+#needs: build
