@@ -1,12 +1,3 @@
-// this model will be used for keeping track of of launches and adding launches to our collection of launches
-
-// we'll use maps for storing our launches as they allow us to map any value to any other value e.g. we could map numbers to objects or strings, we could even map functions to values in our map as well, much more flexible then a simple array
-// Maps also preserve the order you insert things
-
-// How to decide whether our functionality should be in our model or controller. Ideally, we don't want our controllers worrying about how our data is stored, our controllers should focus on working on req and res, and our model can give us these data access functions for writing and reading
-
-// when using clusters, we must remove the state from our server to ensure all processes/workers can share the same memory, otherwise we could run into issues when storing data, the best way to do this is to use a database that is independent to the server
-
 // import axios
 const axios = require('axios');
 
@@ -17,23 +8,6 @@ const planets = require('./planets.mongo');
 const SPACEX_API_URL = 'https://api.spacexdata.com/v4/launches/query';
 
 const DEFAULT_FLIGHT_NUMBER = 100;
-
-// const launches = new Map();
-
-// figure out what data we need to collect
-// const launch = {
-//   flightNumber: 100,
-//   mission: 'Kepler Exploration X',
-//   rocket: 'Explorer IS1',
-//   launchDate: new Date('December 27, 2030'),
-//   target: 'Kepler-442 b',
-//   customers: ['NASA', 'Blue Origin'],
-//   upcoming: true,
-//   success: true,
-// };
-
-// key value
-//launches.set(launch.flightNumber, launch);
 
 // populate the mongo db database with the launches frmo the SpaceX API
 async function populateLaunches() {
@@ -112,9 +86,6 @@ async function findLaunch(filter) {
 }
 
 async function existsLaunchWithId(launchId) {
-  // check if map has an element with the launchId specified where launchId = flightNumber
-  // return launches.has(launchId);
-
   // findById -> searches for the object ID not our flight number
   return await findLaunch({
     // findOne with the ID/flightNumber passed
@@ -149,8 +120,6 @@ async function getAllLaunches(skip, limit) {
     // used for pagination, limit defines the max number of values we can show a page
     .limit(limit);
 }
-
-// Pagination -> pagination splits the data we get from the server into different pages, this is done when we have a lot of data to return, by paginating the data we save our server some work by returning only some of the documents
 
 // save launch to db
 async function saveLaunch(launch) {
@@ -195,14 +164,6 @@ async function scheduleNewLaunch(launch) {
 }
 
 async function abortLaunchById(launchId) {
-  // // get the launch info we want to abort from our map
-  // const aborted = launches.get(launchId);
-  // // not upcoming anymore
-  // aborted.upcoming = false;
-  // // not successful launch
-  // aborted.success = false;
-  // return aborted;
-
   // not using upsert because we dont want to insert, only update
   const aborted = await launchesDatabase.updateOne(
     // if a launch with this exists

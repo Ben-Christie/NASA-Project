@@ -10,10 +10,6 @@ const {
 const { getPagination } = require('../../services/query');
 
 async function httpGetAllLaunches(req, res) {
-  // launches.values() give us an IterableIterator of values in the map, we could use Array.from to convert to an array so that we can return as json, its better practice to implement this in the model
-  // return res.status(200).json(getAllLaunches());
-
-  // req.query gets the params passed in the url e.g. http://localhost:8000/v1/launches?limit=5&page=1, req.query would return limit:5, page:1
   const { skip, limit } = getPagination(req.query);
   const launches = await getAllLaunches(skip, limit);
   return res.status(200).json(launches);
@@ -36,7 +32,6 @@ async function httpAddNewLaunch(req, res) {
 
   // whatever value is passed in as that date, unix timestamp or formatted date, our new date will be converted into a date
   launch.launchDate = new Date(launch.launchDate);
-  // could also do: launch.launchDate.toString() === 'Invalid Date'
   if (isNaN(launch.launchDate)) {
     return res.status(400).json({
       error: 'Invalid launch date',

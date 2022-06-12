@@ -1,13 +1,3 @@
-// this file is for testing our launch functionality
-// api tests are different to unit tests, however, this does apply to unit tests as well
-
-/*
-  When using JEST with Mongoose, in the package.json for the server folder, under license add a jest sections that looks like:
-  "jest": {
-    "testEnvironment": "node"
-  },
-*/
-
 // These tests work with the live database, therefore, these will alter the database when run
 
 // supertest used for running tests against our API, npm install supertest as a dev dependency
@@ -17,7 +7,6 @@ const { mongoConnect, mongoDisconnect } = require('../../services/mongo');
 const { loadPlanetsData } = require('../../models/planets.model');
 
 describe('Launches API', () => {
-  // by using this nested structure (wrapping our tests in a describe) we can set up an environment using beforeAll()
   beforeAll(async () => {
     await mongoConnect();
     // load planets data so its available when we create a new test
@@ -33,11 +22,8 @@ describe('Launches API', () => {
       // our express server, app.js, exports app, file with listen function
       const response = await request(app)
         .get('/v1/launches')
-        // .expect('Content-Type', 'application/json') -> could also write this instead
         .expect('Content-Type', /json/)
         .expect(200);
-
-      // expect(response.statusCode).toBe(200);
     });
   });
 

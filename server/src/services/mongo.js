@@ -6,10 +6,9 @@ const path = require('path');
 // require for security purposes, and so our tests know the URL of our mongo database
 require('dotenv').config();
 
-// connect to our MongoDB Atlas database
+// connect to our MongoDB Atlas database, get URL from .env file
 const MONGO_URL = process.env.MONGODB_URL;
 
-// check connection, 'once' used instead of 'on' to trigger only once
 mongoose.connection.once('open', () => {
   console.log('MongoDB connection established!');
 });

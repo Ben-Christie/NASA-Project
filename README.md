@@ -11,3 +11,4 @@ Effective stellar flux > 0.36 times Earth's value and < 1.11 times Earth's value
 
 Includes integration with the SpaceX API
 
+_This project was for learning purposes_

@@ -1,9 +1,3 @@
-/*
-  Streaming Large Data Files
-  The csv-parse package implements the stream API for large data files, this is the recommended approach for maximum power and ensures scalability of much larger data sets, read data line by line as its read from our hard drive
-  In Node all stream are implemented using the event emitter, where the events are emitted by node and we just react to the event on that stream using the on function
-*/
-
 // fileSystem (or fs) is the default Node file reader
 const fs = require('fs');
 const path = require('path');
@@ -26,18 +20,6 @@ function isHabitablePlanet(planet) {
   );
 }
 
-/*
-  Promise Example:
-  const promise = new Promise((resolve, reject) => {
-    // 42 passed as result to .then
-    resolve(42);
-  });
-  promise.then((result) => {
-    console.log(result); // 42
-  });
-  const result = await promise;
-*/
-
 function loadPlanetsData() {
   // this array is solely responsible for counting the number of habitable planets correctly
   const habitablePlanets = [];
@@ -45,22 +27,16 @@ function loadPlanetsData() {
   // using a promise so we know when we have all our data available
   return new Promise((resolve, reject) => {
     // create a read stream using our csv file, this will give us an event emiiter that we can react to event with our on function
-    // read stream just reads the raw data in bits and bytes
+    // read stream just reads the raw data
     fs.createReadStream(
       path.join(__dirname, '..', '..', 'data', 'kepler_data.csv')
     )
-      // parse the results so we can understand the data we're receiving
-      // the pipe function is meant to connect a readbale stream source to a writable stream desination
-      // kepler file is our source and the parse function is our destination
       .pipe(
-        // here we're saying that comments in our file begin with a #
-        // we set columns to true so that we return each row as a javascript object with key/value pairs
         parse({
           comment: '#',
           columns: true,
         })
       )
-      // data (in brackets) refers to each column, 'data' refers to the data event
       .on('data', async (data) => {
         // push each data chunk on to the array, only push if the planet is habitable
         if (isHabitablePlanet(data)) {
@@ -84,10 +60,6 @@ function loadPlanetsData() {
       });
   });
 }
-
-// parse the results so we can understand the data we're receiving
-// the pipe function is meant to connect a readable stream source to a writable stream desination
-// kepler file is our source and the parse function is our destination
 
 async function getAllPlanets() {
   // look at find docs, insert {} to select all (have no filters)

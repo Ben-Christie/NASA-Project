@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 
 const launchesSchema = new mongoose.Schema({
-  // here you can see that we can specify certain params for each piece of data such as if its required, a max and min val, default val, etc.
   flightNumber: {
     type: Number,
     required: true,
